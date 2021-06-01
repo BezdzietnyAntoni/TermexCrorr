@@ -15,6 +15,11 @@ class TermexCorr:
         self.zero_mask = None
 
     def prepareCorrelationSetting(self, image):
+        """
+        Function have to use before use the class.
+        :param image: Image with the same size
+        :return: None
+        """
         self.image_rows, self.image_cols = image.shape[:2]
         self.zero_mask = np.zeros((self.image_rows, self.image_cols), dtype=float)
         self._prepareBlobPosition()
@@ -57,7 +62,13 @@ class TermexCorr:
         return blobs_shift
 
     def findMaximalFit(self, current_image, previous_image, blob_position):
-
+        """
+        Function calculate max phase correlation, return shift of blob.
+        :param current_image: current image getting to correlation
+        :param previous_image: previous image getting to correlation
+        :param blob_position: its left up corner of blob
+        :return: tuple [y x z] (y and x) its shift, z factor corr in int
+        """
         self.zero_mask[0:self.blob_size, 0:self.blob_size] = \
             previous_image[blob_position[0]:blob_position[0] + self.blob_size,
             blob_position[1]:blob_position[1] + self.blob_size]
@@ -68,4 +79,3 @@ class TermexCorr:
                                   corr[0][0],
                                   np.round(corr[1] / (1. / np.iinfo("int8").max))]).astype("int8")
         return max_corr_int8
-
